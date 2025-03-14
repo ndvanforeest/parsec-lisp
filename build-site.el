@@ -78,8 +78,6 @@
 ;; Generate the site output
 (org-publish-all t)
 
-(message "Build complete, deploying...")
-(shell-command "rsync -avzh ~/Emacs/orgmode/websites/next-parsec/public/ parsecro@86.105.152.250:/home/parsecro/www" "*rsync-output*")
-(message "Deploy complete!")
+(message "Build complete!")
 
 
