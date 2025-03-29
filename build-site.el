@@ -28,10 +28,6 @@
   (when (string= "emacs-lisp" lang)
     (org-babel-execute-src-block)))
 
-;; Performing variables initialization
-;(load-file "func.el")
-(org-babel-load-file "func.el")
-
 ;; Customize the HTML output
 (setq org-html-validation-link t              ;; Don't show validation link
       org-html-head-include-scripts nil       ;; Use our own scripts
@@ -66,7 +62,7 @@
              :with-toc nil              ;; Include a table of contents
              :section-numbers nil       ;; Don't include section numbers
              :html-preamble (with-temp-buffer
-                            (insert-file-contents "templates/preamble.html")
+                            (insert-file-contents "preamble.html")
                             (buffer-string))
              :with-title nil
              :time-stamp-file nil
