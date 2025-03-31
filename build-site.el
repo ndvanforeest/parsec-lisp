@@ -10,9 +10,18 @@
 (unless package-archive-contents
   (package-refresh-contents))
 
+
+(unless (package-installed-p 'htmlize)
+  (package-install 'htmlize))
+
+(unless (package-installed-p 'ox-tufte)
+  (package-install 'ox-tufte))
+
+
 ;; Load the publishing system
 (require 'ox-publish)
 (require 'ox-tufte)
+
 
 ;; Load org-mode, to be able to evaluate the code blocks
 (require 'org)
@@ -23,37 +32,36 @@
 (setq org-export-babel-evaluate t) ;; Allow code execution on export
 (setq org-confirm-babel-evaluate nil) ;; Do not ask for confirmation before executing
 
-;; Evaluate all Emacs Lisp source blocks first
-(org-babel-map-src-blocks nil
-  (when (string= "emacs-lisp" lang)
-    (org-babel-execute-src-block)))
-
-;; Performing variables initialization
-;(load-file "func.el")
-(org-babel-load-file "func.el")
 
 ;; Customize the HTML output
+;; the font colors offered by htmlize (org-html-htmlize-generate-css are not very clear on my screen.
 (setq org-html-validation-link t              ;; Don't show validation link
       org-html-head-include-scripts nil       ;; Use our own scripts
       org-html-head-include-default-style nil ;; Use our own styles
       org-html-head       "<link rel=\"stylesheet\" href=\"css/tufte.css\" type=\"text/css\" />"
       org-html-head-extra "<link rel=\"stylesheet\" href=\"css/ox-tufte.css\" type=\"text/css\" />"
       org-html-postamble t
-      org-html-postamble-format '(("en" "<hr> <p class=\"footer\">©2009-2025 parsec.ro, CC BY &#8226; un site de Claudiu Tănăselia &#8226; Generated with %c</p>"))
+      org-html-postamble-format '(("en" "<hr> <p class=\"footer\"> &#8226; A site by Nicky van Foreest &#8226; Generated with %c</p>"))
       )
+
 ;; Since both html-head and html-head-extra are used, this is appended to html-extra
-(setq org-html-head-extra
-      (concat org-html-head-extra
-              "<link rel=\"icon\" type=\"image/png\" href=\"img/favicon.ico\" />"))
+;; (setq org-html-head-extra
+;;       (concat org-html-head-extra
+;;               "<link rel=\"icon\" type=\"image/png\" href=\"img/favicon.ico\" />"))
 
-(defun my-org-export-enable-transclusion (backend)
-  "Ensure that transcluded content is included before export."
-  (when (member backend '(html tufte-html))  ;; Apply to HTML & Tufte HTML exports
-    (org-transclusion-add-all)))
 
-(add-hook 'org-export-before-processing-hook #'my-org-export-enable-transclusion)
+(setq org-src-preserve-indentation nil
+      org-edit-src-content-indentation 0
+      org-src-tab-acts-natively t
+      org-export-with-smart-quotes t
+      org-html-number-lines t
+      org-html-link-use-abs-url t
+      ;org-html-htmlize-output-type 'inline-css # use 'css and set the colors in ox-tufte.css
+      org-html-htmlize-output-type 'css
+      org-html-htmlize-font-prefix "org-"
+      org-html-use-infojs nil
+)
 
-;; Define the publishing project
 (setq org-publish-project-alist
       (list
        (list "org-site:main"
@@ -68,16 +76,18 @@
              :html-preamble (with-temp-buffer
                             (insert-file-contents "templates/preamble.html")
                             (buffer-string))
-             :with-title nil
+             :with-title t
              :time-stamp-file nil
              :exclude "\\(?:^drafts/.*\\.org\\|^.packages/.*\\.org\\)"
              :html-html5-fancy t
              :html-doctype "html5"
-             )))
+             :auto-sitemap t
+             :sitemap-filename "index.org"
+             :sitemap-title "Contents"
+             :sitemap-sort-files 'anti-chronologically
+             :sitemap-style 'list)))
 
 ;; Generate the site output
 (org-publish-all t)
 
 (message "Build complete!")
-
-
