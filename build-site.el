@@ -32,7 +32,6 @@
 (setq org-export-babel-evaluate t) ;; Allow code execution on export
 (setq org-confirm-babel-evaluate nil) ;; Do not ask for confirmation before executing
 
-
 ;; Customize the HTML output
 ;; the font colors offered by htmlize (org-html-htmlize-generate-css are not very clear on my screen.
 (setq org-html-validation-link t              ;; Don't show validation link
@@ -74,7 +73,7 @@
              :with-toc nil              ;; Include a table of contents
              :section-numbers nil       ;; Don't include section numbers
              :html-preamble (with-temp-buffer
-                            (insert-file-contents "templates/preamble.html")
+                            (insert-file-contents "preamble.html")
                             (buffer-string))
              :with-title t
              :time-stamp-file nil
